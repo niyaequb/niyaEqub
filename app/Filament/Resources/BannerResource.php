@@ -43,7 +43,6 @@ class BannerResource extends Resource
                         ->label('Banner Image')
                         ->image()
                         ->disk('r2') // <-- Change this from 'public' to 'r2'
-                        ->visibility('public')
                         ->directory('banners')
                         ->required()
                         ->columnSpanFull(),
