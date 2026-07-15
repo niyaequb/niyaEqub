@@ -59,17 +59,6 @@ return [
             'throw' => false,
             'report' => false,
         ],
-        'r2' => [
-            'driver' => 's3',
-            'key' => env('CLOUDFLARE_R2_ACCESS_KEY_ID'),
-            'secret' => env('CLOUDFLARE_R2_SECRET_ACCESS_KEY'),
-            'region' => 'us-east-1', // R2 doesn't use region, but S3 driver requires a placeholder
-            'bucket' => env('CLOUDFLARE_R2_BUCKET'),
-            'url' => env('CLOUDFLARE_R2_URL'),
-            'endpoint' => env('CLOUDFLARE_R2_ENDPOINT'),
-            'use_path_style_endpoint' => true,
-            'throw' => false,
-        ],
 
     ],
 
