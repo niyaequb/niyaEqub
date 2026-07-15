@@ -42,7 +42,7 @@ class BannerResource extends Resource
                     FileUpload::make('image_path')
                         ->label('Banner Image')
                         ->image()
-                        ->disk('do_spaces') // <-- Changed from 'r2' to 'do_spaces'
+                        ->disk('do') // <-- Changed from 'r2' to 'do'
                         ->visibility('public')
                         ->directory('banners')
                         ->required()
@@ -67,7 +67,7 @@ class BannerResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('image_path')
                     ->label('Image')
-                    ->disk('do_spaces'), // <-- Changed from 'r2' to 'do_spaces'
+                    ->disk('do'), // <-- Changed from 'r2' to 'do'
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
                 Tables\Columns\IconColumn::make('is_active')
