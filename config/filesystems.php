@@ -75,7 +75,7 @@ return [
             'driver' => 's3',
             'key' => env('DO_SPACES_KEY'),
             'secret' => env('DO_SPACES_SECRET'),
-            'region' => env('DO_SPACES_REGION', 'nyc3'),
+            'region' => env('DO_SPACES_REGION', 'fra1'),
             'bucket' => env('DO_SPACES_BUCKET'),
             'url' => env('DO_SPACES_URL'),
             'endpoint' => env('DO_SPACES_ENDPOINT'),
