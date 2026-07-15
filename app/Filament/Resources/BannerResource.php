@@ -42,7 +42,7 @@ class BannerResource extends Resource
                     FileUpload::make('image_path')
                         ->label('Banner Image')
                         ->image()
-                        ->disk('r2') // <-- Change this from 'public' to 'r2'
+                        ->disk('public')
                         ->visibility('public')
                         ->directory('banners')
                         ->required()
@@ -67,7 +67,7 @@ class BannerResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('image_path')
                     ->label('Image')
-                    ->disk('r2'), // <-- I have change this from 'public' to 'r2'
+                    ->disk('public'),
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
                 Tables\Columns\IconColumn::make('is_active')
