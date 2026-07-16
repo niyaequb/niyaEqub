@@ -15,6 +15,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
@@ -41,10 +42,9 @@ class BannerResource extends Resource
                     FileUpload::make('image_path')
                         ->label('Banner Image')
                         ->image()
-                        ->disk('do') // Points to DO Spaces
-                        ->directory('banners') // Saves inside a 'banners' folder
+                        ->disk('public')
                         ->visibility('public')
-                        ->preserveFilenames()
+                        ->directory('banners')
                         ->required()
                         ->columnSpanFull(),
                     TextInput::make('title')
@@ -67,8 +67,7 @@ class BannerResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('image_path')
                     ->label('Image')
-                    ->disk('do') // Tells the table where to fetch the URL from
-                    ->square(), // Optional: makes it look nicer in the table
+                    ->disk('public'),
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
                 Tables\Columns\IconColumn::make('is_active')
