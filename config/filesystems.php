@@ -70,6 +70,14 @@ return [
             'use_path_style_endpoint' => true,
             'throw' => false,
         ],
+        // Fallback to local storage for do_spaces
+        'do_spaces' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public'),
+            'url' => rtrim(env('APP_URL'), '/').'/storage',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
 
     ],
 
