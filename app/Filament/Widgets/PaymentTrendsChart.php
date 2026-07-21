@@ -12,7 +12,7 @@ class PaymentTrendsChart extends ChartWidget
 {
     protected static ?int $sort = 3;
 
-    protected ?string $heading = 'Payment Trends (Revenue)';
+    protected ?string $heading = 'Payment Trends ($Revenue)';
 
     protected function getData(): array
     {
