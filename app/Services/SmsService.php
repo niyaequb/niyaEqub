@@ -67,6 +67,7 @@ class SmsService
             'to' => $to,
             'len' => $this->length,
             'ttl' => $this->otpTtlMinutes * 60,
+            'ttl' => $this->otpTtlMinutes * 60,
             // 'pr' => ' ',
             'sb' => 1,
             'sa' => 1,
@@ -132,7 +133,7 @@ class SmsService
     /**
      * Verify OTP from AfroMessage
      */
-    public function verifyAfroOtp($to, $verificationId, $code): array
+    public function verifyAfroOtp( $to, $verificationId, $code): array
     {
         if (!$this->token) {
             return [
@@ -141,6 +142,8 @@ class SmsService
             ];
         }
 
+        $url = rtrim($this->afroBaseUrl) . '/verify';
+
         if (!$to && !$verificationId) {
             return [
                 'status' => 'error',
@@ -148,56 +151,42 @@ class SmsService
             ];
         }
 
-        $url = rtrim($this->afroBaseUrl) . '/verify';
-
         $query = [
             'to' => $to,
             'vc' => $verificationId,
             'code' => $code,
         ];
 
-        try {
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $this->token,
-            ])
-                ->timeout(10)
-                ->get($url, $query);
+        // $response = Http::withToken($this->token)->get($url, $query);
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $this->token,
+        ])
+            ->timeout(60)
+            ->get($url, $query);
 
-            if ($response->failed()) {
-                return [
-                    'status' => 'error',
-                    'message' => 'Verification request failed.',
-                    'data' => $response->json(),
-                ];
-            }
-
-            $res = $response->json();
-
-            if (($res['acknowledge'] ?? '') !== 'success') {
-                return [
-                    'status' => 'error',
-                    'message' => $res['response']['message'] ?? 'Invalid OTP',
-                    'data' => $res,
-                ];
-            }
-
-            return [
-                'status' => 'success',
-                'message' => 'OTP verified successfully',
-                'data' => $res['response'] ?? null,
-            ];
-        } catch (\Exception $e) {
-            Log::error('AfroMessage OTP Verification Exception', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'phone' => $to,
-            ]);
-
+        if ($response->failed()) {
             return [
                 'status' => 'error',
-                'message' => 'Unable to verify OTP due to a network error. Please try again.',
+                'message' => 'Verification request failed.',
+                'data' => $response->json(),
             ];
         }
+
+        $res = $response->json();
+
+        if (($res['acknowledge'] ?? '') !== 'success') {
+            return [
+                'status' => 'error',
+                'message' => $res['response']['message'] ?? 'Invalid OTP',
+                'data' => $res,
+            ];
+        }
+
+        return [
+            'status' => 'success',
+            'message' => 'OTP verified successfully',
+            'data' => $res['response'],
+        ];
     }
 
     /**
@@ -218,8 +207,8 @@ class SmsService
         $provider = $this->getActiveProvider();
         $response = null;
 
-        if ($this->smsMode == 1) {
-            $response = $this->afroSendSingleSms($to, $message, $templateId);
+        if ($this->smsMode == '1') {
+            $response = $this->afroSendSingleSms($to, $message);
 
             if ($this->isSuccess($response)) {
                 $result = [
@@ -238,8 +227,8 @@ class SmsService
                 $this->logSms($to, $message, 'error', $result, $sendable, $provider);
                 return $result;
             }
-        } elseif ($this->smsMode == 2) {
-            $response = $this->geezSendSingleSms($to, $message, $templateId);
+        } elseif ($this->smsMode == '2') {
+            $response = $this->geezSendSingleSms($to, $message);
 
             if (isset($response['error']) && $response['error'] == false) {
                 $result = [
@@ -478,7 +467,7 @@ class SmsService
         }
 
         try {
-            $response = Http::timeout(5) #from orginal 60 
+            $response = Http::timeout(60)
                 ->asForm()
                 ->post($this->geezApiUrl, [
                     'token' => $this->geezToken,
@@ -502,17 +491,15 @@ class SmsService
                 'body' => $response->body(),
             ];
         } catch (\Exception $e) {
-            Log::error('AfroMessage OTP Send Exception', [
+            Log::error('GEEZ SMS Exception', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
-            $result = [
+
+            return [
                 'status' => 'error',
                 'message' => 'Exception: ' . $e->getMessage(),
             ];
-            $this->logSms($to, 'OTP Request', 'error', $result, null, 'afro');
-            
-            return $result; // <--- ADD THIS RETURN
         }
     }
 
